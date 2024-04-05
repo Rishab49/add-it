@@ -1,7 +1,6 @@
 'use client'
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { MatElement, Matrix, SelectedElement, SelectedElementStack, getRandomNumber } from "../app";
+import {  Matrix,  SelectedElementStack,  } from "../app";
 
 
 
@@ -60,7 +59,6 @@ export default function Home() {
             <div className="flex items-center justify-between h-[60px] w-full p-4">
                 <span>Time : 33</span>
                 <span>Score : 100</span>
-                <Link href={"/blog"}>blog</Link>
             </div>
             <div className="flex items-center justify-center flex-col flex-1 gap-20">
                 <div className="text-xl">
