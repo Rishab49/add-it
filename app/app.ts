@@ -38,7 +38,9 @@ export class SelectedElementStack {
         if (e.currentTarget instanceof HTMLDivElement) {
             if (this.stack.filter(e => e.key == key).length == 0) {
                 let value = e.currentTarget.innerText ?? 0;
-                e.currentTarget.style.backgroundColor = "cyan";
+                e.currentTarget.style.backgroundColor = "";
+                e.currentTarget.style.background = "repeating-linear-gradient(45deg,cyan 0 10px, transparent 10px 20px)";
+                e.currentTarget.style.color="yellow";
                 return {
                     value: Number(value),
                     stack: new SelectedElementStack([
@@ -52,8 +54,10 @@ export class SelectedElementStack {
                 let remainingStack = this.stack.slice(index + 1, this.stack.length);
                 let addition = 0;
                 remainingStack.forEach(e => {
-                    console.log("setting style",e);
-                    e.element.style.backgroundColor = "";
+                    console.log("setting style", e);
+                    e.element.style.background = "";
+                    e.element.style.backgroundColor =  `hsla(${360 * (Number(e.element.innerText) / 100)},100%,50%)`;
+                    e.element.style.color="black";
                     addition += Number(e.element.innerText)
                 });
                 // console.log("else executed", newStack,remainingStack,addition,index);
@@ -103,7 +107,7 @@ export class Matrix {
         }
     }
 
-    updateMatrix(indices: { index: number, ind: number, value: number }[], currentID: number) {
+    updateMatrix(indices: { index: number, ind: number, id: number, value: number }[], currentID: number) {
         this.diff++;
         let newMatrix = new Matrix(this.row, this.column);
         newMatrix.diff = this.diff;
@@ -111,7 +115,7 @@ export class Matrix {
         indices.forEach(i => {
             newMatrix.elements = newMatrix.elements.map((e, index) => {
                 if (index == i.index) {
-                    return e.filter(elem => elem.id != i.ind)
+                    return e.filter(elem => elem.id != i.id)
                 }
                 return e
             });
@@ -124,4 +128,121 @@ export class Matrix {
 
         return newMatrix;
     }
+}
+
+class Dimension {
+    row: number;
+    column: number;
+    constructor(row: number, col: number) {
+        this.row = row;
+        this.column = col;
+    }
+}
+
+export class Master {
+    currentTarget: number = 0;
+    currentAddition: number;
+    dimension: Dimension;
+    currentID: number;
+    score: number;
+
+    constructor(currentID: number, matrix: Matrix) {
+        this.currentAddition = 0;
+        this.dimension = { row: matrix.row, column: matrix.column };
+        this.currentID = currentID;
+        this.score = 0;
+        this.currentTarget = this.updateCurrentTarget(matrix);
+    }
+
+    updateCurrentID(val: number) {
+        this.currentID += val;
+        return this;
+    }
+
+    resetCurrentAddition() {
+        this.currentAddition = 0;
+        return this;
+    }
+    updateCurrentAddition(val: number) {
+        this.currentAddition += val;
+        return this;
+    }
+    get getCurrentTarget() {
+        return this.currentTarget;
+    }
+    updateCurrentTarget(matrix: Matrix) {
+        let cellCount = Math.floor(Math.random() * matrix.column);
+        cellCount == 0 ? cellCount = 1 : null;
+        let addition = 0;
+        let currentRow = Math.floor(Math.random() * matrix.column);
+        let currentColumn = Math.floor(Math.random() * matrix.column);
+        let cells = [];
+        // console.clear();
+        try {
+            for (let start = 0; start < cellCount; start++) {
+                cells.push(`${currentRow}-${currentColumn}`);
+                let num = matrix.elements[currentColumn][matrix.row - currentRow - 1].value;
+                console.log(`row : ${matrix.row - currentRow - 1}, column : ${currentColumn}`, num);
+                addition += num;
+                console.log(addition, cells);
+                [currentRow, currentColumn] = this.getNextCell(currentRow, currentColumn, cells, {
+                    row: matrix.row,
+                    column: matrix.column
+                });
+            }
+        } catch (e) {
+            console.log(e, currentRow, currentColumn);
+        }
+
+        return addition;
+    }
+
+    getNextCell(row: number, column: number, cells: string[], dimension: Dimension): number[] {
+        let newRow = row;
+        let newColumn = column;
+        let binary = this.getRandomBinary();
+        switch (binary) {
+            case 0:
+                if (row >= 3) {
+                    console.log('first 0', row);
+                    newRow = row - 1;
+                }
+                else {
+                    console.log('first 1', row);
+                    newRow = row + this.getRandomBinary(true);
+                    newRow < 0 ? newRow = 1 : null;
+                }
+                break;
+            case 1:
+                if (column == 0) {
+                    console.log('second 0', column);
+                    newColumn = column + 1;
+                }
+                else if (column == dimension.column - 1) {
+                    console.log('second 1', column);
+                    newColumn = column - 1;
+                }
+                else {
+                    console.log('second 2', column);
+                    newColumn = column + this.getRandomBinary(true);
+                }
+
+                break;
+        }
+
+
+        if (cells.includes(`${newRow}-${newColumn}`)) {
+            console.log("isEqual", newRow, newColumn, cells);
+            return this.getNextCell(row, column, cells, dimension);
+        }
+        return [
+            newRow,
+            newColumn
+        ]
+    }
+
+    getRandomBinary(negative?: boolean) {
+        return negative ? Math.floor(Math.random() * 2) * 2 - 1 : Math.floor(Math.random() * 2);
+    }
+
 }

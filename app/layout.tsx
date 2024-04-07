@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { Chakra_Petch } from "next/font/google";
+import { Quicksand } from "next/font/google";
 import "./globals.css";
 
-
-const chakra = Chakra_Petch({ weight: ["500"], subsets: ['latin'] });
+const quickSand = Quicksand({
+  weight:["700"],
+  subsets:['latin']
+})
 
 export const metadata: Metadata = {
   title: "Add It",
@@ -16,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={chakra.className}>{children}
+    <html lang="en" className={quickSand.className}>
+      <body>{children}
       </body>
     </html>
   );
