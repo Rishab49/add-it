@@ -40,7 +40,7 @@ export class SelectedElementStack {
                 let value = e.currentTarget.innerText ?? 0;
                 e.currentTarget.style.backgroundColor = "";
                 e.currentTarget.style.background = "repeating-linear-gradient(45deg,cyan 0 10px, transparent 10px 20px)";
-                e.currentTarget.style.color="yellow";
+                e.currentTarget.style.color = "yellow";
                 return {
                     value: Number(value),
                     stack: new SelectedElementStack([
@@ -56,8 +56,8 @@ export class SelectedElementStack {
                 remainingStack.forEach(e => {
                     console.log("setting style", e);
                     e.element.style.background = "";
-                    e.element.style.backgroundColor =  `hsla(${360 * (Number(e.element.innerText) / 100)},100%,50%)`;
-                    e.element.style.color="black";
+                    e.element.style.backgroundColor = `hsla(${360 * (Number(e.element.innerText) / 100)},100%,50%)`;
+                    e.element.style.color = "black";
                     addition += Number(e.element.innerText)
                 });
                 // console.log("else executed", newStack,remainingStack,addition,index);
@@ -136,6 +136,34 @@ class Dimension {
     constructor(row: number, col: number) {
         this.row = row;
         this.column = col;
+    }
+}
+
+export class Timer {
+    minutes: number;
+    seconds: number;
+    shouldStop: boolean;
+    constructor(minutes: number, seconds: number,shouldStop?:boolean) {
+        this.minutes = minutes;
+        this.seconds = seconds;
+        this.shouldStop = shouldStop ?? false;
+    }
+    update() {
+        if (this.minutes == 0 && this.seconds == 0) {
+            this.shouldStop = true;
+        }
+        else {
+            console.log("updating");
+
+            if (this.seconds == 0) {
+                this.minutes = this.minutes - 1;
+                this.seconds = 59;
+            }
+            else {
+                this.seconds = this.seconds - 1;
+            }
+        }
+        return this;
     }
 }
 
