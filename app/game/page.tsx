@@ -1,10 +1,9 @@
 'use client'
 import { useEffect, useRef, useState } from "react";
 import { Master, Matrix, SelectedElementStack, Timer, } from "../app";
-import StarIcon from "@/assets/star.png";
-import ClockIcon from "@/assets/clock.png";
-import Image from "next/image";
 import { Titan_One } from "next/font/google";
+import Header from "./components/Header";
+import Target from "./components/Target";
 
 
 const titan = Titan_One({
@@ -101,7 +100,7 @@ export default function Home() {
     useEffect(() => {
         console.log(clock);
         if (!clock.shouldStop) {
-            document.querySelector("dialog")?.close();
+            document.querySelector("dialog") ? document.querySelector("dialog")?.close() : null;
             setTimeout(() => {
                 setClock((clock) => {
                     let timer = clock.update();
@@ -125,9 +124,9 @@ export default function Home() {
 
     return (
         <main className="flex flex-col items-stretch justify-stretch h-full w-full relative">
-            <dialog 
-            onCancel={(e) => e.preventDefault()}
-            className="absolute top-0 left-0 h-fit w-fit max-h-screen max-w-[100vw] bg-transparent">
+            <dialog
+                onCancel={(e) => e.preventDefault()}
+                className="absolute top-0 left-0 h-fit w-fit max-h-screen max-w-[100vw] bg-transparent">
                 {clock.shouldStop &&
                     <div className="relative h-screen w-screen flex items-center justify-center bg-[rgba(255,255,255,0.25)]  z-50 " style={{
                         backdropFilter: "blur(8px)"
@@ -155,32 +154,9 @@ export default function Home() {
                 }}
             >
             </div>
-            <div className="absolute top-0 right-0 flex flex-col items-end justify-center gap-4 h-fit w-fit p-4">
-
-                <span className="flex h-[50px] w-fit">
-                    <Image alt="star" src={StarIcon} height="45" width="45" className="p-2 z-10 bg-[#272a57]  bg-yellow rounded-md border-orange-400 border-2" />
-                    <p className="flex items-center justify-center p-2 rounded-md bg-orange-400 w-[50px] -translate-x-3 text-2xl relative before:content-[''] before:absolute before:top-[5px] before:right-[5px] before:bg-[#ffffff5c] before:h-[10px] before:w-[15px]  before:rounded-full before:rotate-45" style={{
-                        boxShadow: `rgba(0, 0, 0, 0.25) 0px -5px inset`
-                    }}>{master instanceof Master && master.score}</p>
-                </span>
-                <span className="flex h-[50px] w-fit">
-                    <Image alt="clock" src={ClockIcon} height="45" width="45" className="aspect-square p-2 z-10 bg-[#272a57]  bg-yellow rounded-md border-orange-400 border-2" />
-                    <p className="flex items-center justify-center px-4 py-2 rounded-md bg-orange-400 w-fit -translate-x-3 text-2xl relative before:content-[''] before:absolute before:top-[5px] before:right-[5px] before:bg-[#ffffff5c] before:h-[10px] before:w-[15px]  before:rounded-full before:rotate-45" style={{
-                        boxShadow: `rgba(0, 0, 0, 0.25) 0px -5px inset`
-                    }}>{clock.minutes}:{clock.seconds}</p>
-                </span>
-            </div>
+            <Header score={master instanceof Master && master.score} clock={clock} />
             <div className="flex items-center justify-center flex-col flex-1 gap-20">
-                <div className="flex">
-                    <p className="flex items-center justify-center px-4 py-2 rounded-md bg-orange-400 w-fit translate-x-3 text-2xl relative before:content-[''] before:absolute before:top-[5px] before:right-[5px] before:bg-[#ffffff5c] before:h-[10px] before:w-[15px]  before:rounded-full before:rotate-45" style={{
-                        boxShadow: `rgba(0, 0, 0, 0.25) 0px -5px inset`
-                    }}>{master instanceof Master && master.currentAddition}</p>
-                    <div className="p-2 z-10 bg-[#272a57]  bg-yellow rounded-md border-orange-400 border-2 text-white" > = </div>
-                    <p className="flex items-center justify-center px-4 py-2 rounded-md bg-orange-400 w-fit -translate-x-3 text-2xl relative before:content-[''] before:absolute before:top-[5px] before:right-[5px] before:bg-[#ffffff5c] before:h-[10px] before:w-[15px]  before:rounded-full before:rotate-45" style={{
-                        boxShadow: `rgba(0, 0, 0, 0.25) 0px -5px inset`
-                    }}>{master instanceof Master && master.currentTarget}</p>
-
-                </div>
+                <Target currentAddition={master instanceof Master && master.currentAddition} currentTarget={master instanceof Master && master.currentTarget} />
                 <div className="gap-[0.15rem] flex border-[4px] border-black rounded-lg flex-row h-[315.2px] w-[315.2px] items-end justify-end overflow-hidden" ref={gameContainer}>
 
                     {
